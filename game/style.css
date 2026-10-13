@@ -50,5 +50,30 @@ input { width:90px; padding:5px 4px; color:var(--ink); border:1px solid #252a295
 .howto strong { color:var(--ink); margin-right:7px; }
 footer { display:flex; justify-content:space-between; gap:12px; font-size:9px; letter-spacing:.5px; color:#787b70; padding:0 5px; }
 footer a { color:inherit; text-underline-offset:2px; }
+/* A desktop playtest uses its iframe height, with stamps beside the conveyor. */
+@media(min-width:800px) {
+  .depot { display:grid; grid-template-columns:210px minmax(0,1fr); grid-template-rows:auto 1fr auto; gap:24px; max-width:1160px; height:100svh; min-height:360px; padding:20px 24px; }
+  .masthead { display:block; align-self:start; padding:14px 0 0; }
+  .eyebrow { font-size:9px; letter-spacing:1.5px; }
+  h1 { font-size:48px; line-height:.98; }
+  .edition { display:inline-block; text-align:left; margin-top:22px; }
+  .machine { grid-column:2; grid-row:1 / 4; display:grid; grid-template-columns:minmax(0,1fr) 138px; grid-template-rows:auto minmax(0,1fr) auto; min-height:0; }
+  .dashboard { grid-column:1 / 3; padding:11px 19px 10px; }
+  .dashboard strong { font-size:30px; }
+  .playfield { aspect-ratio:auto; min-height:0; }
+  canvas { object-fit:contain; }
+  .stamp-controls { grid-column:2; grid-row:2; grid-template-columns:1fr; grid-template-rows:repeat(3,1fr); gap:10px; padding:12px; border-top:0; border-left:3px solid var(--ink); }
+  .stamp-controls button { justify-content:center; min-height:70px; gap:7px; }
+  .stamp-controls .symbol { margin-top:0; }
+  .stamp-controls kbd { display:block; margin:4px 0 0; }
+  .utility { grid-column:1 / 3; padding:9px 15px; }
+  .howto { align-self:start; font-size:12px; margin:0; }
+  .howto strong { display:block; margin-bottom:8px; }
+  footer { flex-direction:column; gap:8px; padding:0; }
+  .overlay { padding:18px; }
+  h2 { font-size:36px; margin:15px 0 12px; }
+  .overlay p { font-size:12px; margin-bottom:16px; }
+  .overlay .overlay-note { margin-top:15px; }
+}
 @media(max-width:480px) { .depot { padding:20px 12px; } .masthead { padding-bottom:17px; } .eyebrow { font-size:8px; letter-spacing:1.5px; } h1 { letter-spacing:-2px; } .edition { font-size:9px; } .dashboard { padding:13px 18px; } .dashboard strong { font-size:28px; } .overlay { padding:16px; } .overlay p { font-size:11px; margin-bottom:16px; } h2 { margin:15px 0 12px; } .intro-tag { font-size:7px; } .start { padding:10px 20px; font-size:14px; } .stamp-controls { gap:7px; padding:12px; } .stamp-controls button { min-height:79px; font-size:10px; } .stamp-controls kbd { display:block; margin:5px 0 0; font-size:8px; } .utility { padding:10px 12px; gap:8px; } input { width:75px; } .feedback { font-size:9px; bottom:7px; } footer { font-size:8px; } }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; } }
