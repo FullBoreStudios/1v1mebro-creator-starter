@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onevonemebro.com/static/developers/1v1mebro.schema.json",
+  "title": "1v1meBro Creator Submission Manifest v1",
+  "description": "Declarative review metadata for a public GitHub repository. Rights and compatibility still require human review. Do not add a $schema field to 1v1mebro.json: v1 requires exactly the documented keys.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "title", "description", "author", "license", "permissions", "assets", "game", "instructions", "comments", "notes"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "title": { "$ref": "#/$defs/text100" },
+    "description": { "$ref": "#/$defs/nonemptyText", "maxLength": 2000 },
+    "author": {
+      "type": "object", "additionalProperties": false, "required": ["name", "github_username"],
+      "properties": {
+        "name": { "$ref": "#/$defs/text100" },
+        "github_username": { "type": "string", "maxLength": 39, "pattern": "^[A-Za-z0-9][A-Za-z0-9-]{0,38}$" }
+      }
+    },
+    "license": {
+      "type": "object", "additionalProperties": false, "required": ["spdx_id", "file"],
+      "properties": {
+        "spdx_id": { "type": "string", "enum": ["MIT", "BSD-2-Clause", "BSD-3-Clause", "Apache-2.0", "ISC", "CC0-1.0"] },
+        "file": { "$ref": "#/$defs/relativePath" }
+      }
+    },
+    "permissions": {
+      "type": "object", "additionalProperties": false, "required": ["hosting_allowed", "modification_allowed"],
+      "properties": {
+        "hosting_allowed": { "type": "boolean", "const": true },
+        "modification_allowed": { "type": "boolean", "const": true }
+      }
+    },
+    "assets": {
+      "type": "object", "additionalProperties": false, "required": ["rights_confirmed", "license_notes", "attributions"],
+      "properties": {
+        "rights_confirmed": { "type": "boolean", "const": true },
+        "license_notes": { "$ref": "#/$defs/text3000" },
+        "attributions": {
+          "type": "array", "maxItems": 100,
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["path", "author", "license", "source"],
+            "properties": {
+              "path": { "$ref": "#/$defs/relativePath" },
+              "author": { "$ref": "#/$defs/text100" },
+              "license": { "$ref": "#/$defs/text100" },
+              "source": {
+                "$ref": "#/$defs/text", "maxLength": 500,
+                "anyOf": [
+                  { "const": "" },
+                  { "pattern": "^https://[^/?#@]+(?:[/?#][\\s\\S]*)?$" }
+                ],
+                "description": "HTTPS source URL without username/password, or empty for original work."
+              }
+            }
+          }
+        }
+      }
+    },
+    "game": {
+      "type": "object", "additionalProperties": false,
+      "required": ["entrypoint", "build_directory", "controls", "player_count", "seeded", "reduced_motion"],
+      "properties": {
+        "entrypoint": { "$ref": "#/$defs/relativePath", "pattern": "\\.html$" },
+        "build_directory": {
+          "anyOf": [ { "$ref": "#/$defs/relativePath" }, { "const": "." } ],
+          "description": "Committed static output directory relative to the repository root, or . for root output."
+        },
+        "controls": { "$ref": "#/$defs/nonemptyText", "maxLength": 1000 },
+        "player_count": { "type": "integer", "const": 1 },
+        "seeded": { "type": "boolean", "const": true },
+        "reduced_motion": { "type": "boolean", "const": true }
+      }
+    },
+    "instructions": {
+      "type": "object", "additionalProperties": false, "required": ["build", "play", "test"],
+      "properties": {
+        "build": { "$ref": "#/$defs/text3000" },
+        "play": { "$ref": "#/$defs/text3000" },
+        "test": { "$ref": "#/$defs/text3000" }
+      }
+    },
+    "comments": { "$ref": "#/$defs/text", "maxLength": 3000 },
+    "notes": { "$ref": "#/$defs/text", "maxLength": 3000 }
+  },
+  "$defs": {
+    "text": { "type": "string", "pattern": "^[^\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F]*$" },
+    "nonemptyText": { "$ref": "#/$defs/text", "minLength": 1, "pattern": "\\S" },
+    "text100": { "$ref": "#/$defs/nonemptyText", "maxLength": 100 },
+    "text3000": { "$ref": "#/$defs/nonemptyText", "maxLength": 3000 },
+    "relativePath": {
+      "type": "string", "minLength": 1, "maxLength": 200,
+      "pattern": "^(?!\\.{1,2}(?:/|$))[A-Za-z0-9_.-]+(?:/(?!\\.{1,2}(?:/|$))[A-Za-z0-9_.-]+)*$",
+      "description": "Safe relative POSIX path; no absolute path, empty component, dot/dot-dot component, backslash, or spaces."
+    }
+  }
+}

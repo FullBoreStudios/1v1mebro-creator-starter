@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "title": "Stamp Sprint",
+  "description": "A tiny toy sorting depot. Wait for each parcel to enter the stamp zone, then match its symbol. Keep your streak through a 45-second seeded shift.",
+  "author": {
+    "name": "FullBoreStudios",
+    "github_username": "FullBoreStudios"
+  },
+  "license": {
+    "spdx_id": "MIT",
+    "file": "LICENSE"
+  },
+  "permissions": {
+    "hosting_allowed": true,
+    "modification_allowed": true
+  },
+  "assets": {
+    "rights_confirmed": true,
+    "license_notes": "All game code, canvas illustrations, interface styling, and written instructions in this repository were created for this original example. FullBoreStudios licenses them under MIT. There are no third-party images, sounds, fonts, or other assets. System fonts are supplied by the player's browser, not redistributed. The repository permits 1v1meBro to copy, modify, and rehost its game and original assets under MIT.",
+    "attributions": [
+      {
+        "path": "game/app.js",
+        "author": "FullBoreStudios",
+        "license": "MIT",
+        "source": ""
+      },
+      {
+        "path": "game/style.css",
+        "author": "FullBoreStudios",
+        "license": "MIT",
+        "source": ""
+      }
+    ]
+  },
+  "game": {
+    "entrypoint": "index.html",
+    "build_directory": "game",
+    "controls": "Tap the circle, triangle, or square stamp once the front parcel is inside the striped stamp zone. Keyboard: 1/2/3 or A/S/D. Enter starts or restarts a shift; P pauses. Use the pause button before switching tabs.",
+    "player_count": 1,
+    "seeded": true,
+    "reduced_motion": true
+  },
+  "instructions": {
+    "build": "No build step or dependency installation. The committed game/ directory is the complete static release. Keep index.html, style.css, engine.js, app.js, and LICENSE.txt together. Retain the license notice when rehosting or modifying.",
+    "play": "From the repository root run py -m http.server 8080, then open http://127.0.0.1:8080/game/. Python is only a local file server. Any ordinary static HTTP server works. Match symbols while parcels cross the stamp zone; a correct parcel earns 10 points plus a streak bonus, and missed or incorrect parcels reset the streak.",
+    "test": "Run node tests/check.cjs with Node.js 18 or newer. It checks repeatable courses and results, scoring, timer boundaries, ignored early input, input-independent course generation, the committed manifest and release files, and absence of network dependencies. Manually check touch controls and reduced motion in a browser. See README.md for the browser checklist."
+  },
+  "comments": "This is a complete static Creator Playtest example, not an Arena game registration. Scores are local and never update account records, wins, or badges. Only public votes use the portal's signed-in API.",
+  "notes": "Review the exact commit before approving or promoting. The game makes no fetch, XHR, WebSocket, analytics, storage, or external asset requests. It works inside an iframe with sandbox=allow-scripts and an opaque origin. The default seed is 314159; ?seed=123 selects a reproducible alternative. Decorative motion can be disabled without changing gameplay."
+}
