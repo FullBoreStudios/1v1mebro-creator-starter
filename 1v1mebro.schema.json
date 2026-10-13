@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://onevonemebro.com/static/developers/1v1mebro.schema.json",
+  "$id": "https://onevonemebro.com/static/developers/creator-manifest.schema.json",
   "title": "1v1meBro Creator Submission Manifest v1",
   "description": "Declarative review metadata for a public GitHub repository. Rights and compatibility still require human review. Do not add a $schema field to 1v1mebro.json: v1 requires exactly the documented keys.",
   "type": "object",
