@@ -62,6 +62,11 @@
       "required": ["entrypoint", "build_directory", "controls", "player_count", "seeded", "reduced_motion"],
       "properties": {
         "entrypoint": { "$ref": "#/$defs/relativePath", "pattern": "\\.html$" },
+        "thumbnail": {
+          "$ref": "#/$defs/relativePath",
+          "pattern": "\\.(?:[Pp][Nn][Gg]|[Jj][Pp][Ee]?[Gg]|[Ww][Ee][Bb][Pp])$",
+          "description": "Optional PNG, JPG, JPEG or WebP path relative to game.build_directory. Commit the image inside the reviewed static release. Maximum 1 MiB and 4096 pixels per side; 1280x720 (16:9) is recommended."
+        },
         "build_directory": {
           "anyOf": [ { "$ref": "#/$defs/relativePath" }, { "const": "." } ],
           "description": "Committed static output directory relative to the repository root, or . for root output."

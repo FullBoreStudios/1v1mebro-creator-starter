@@ -106,6 +106,12 @@ validateSchema(config, schema);
 assert.throws(() => validateSchema({ ...config, $schema: 'unexpected' }, schema), /extra key/);
 assert.throws(() => validateSchema({ ...config, schema_version: true }, schema), /integer/);
 assert.throws(() => validateSchema({ ...config, permissions: { hosting_allowed: false, modification_allowed: true } }, schema), /constant/);
+const withoutThumbnail = JSON.parse(JSON.stringify(config));
+delete withoutThumbnail.game.thumbnail;
+assert.doesNotThrow(() => validateSchema(withoutThumbnail, schema), 'thumbnail remains optional for existing submissions');
+for (const thumbnail of ['../outside.png', 'https://example.com/card.png', '/absolute.png', 'image.svg']) {
+  assert.throws(() => validateSchema({ ...config, game: { ...config.game, thumbnail } }, schema), /pattern/);
+}
 assert.equal(config.schema_version, 1);
 assert.equal(config.game.player_count, 1);
 assert.equal(config.game.seeded, true);
@@ -117,9 +123,25 @@ assert.equal(config.license.spdx_id, 'MIT');
 assert.ok(fs.existsSync(path.join(root, config.license.file)));
 assert.equal(fs.readFileSync(path.join(root, 'game/LICENSE.txt'), 'utf8'), fs.readFileSync(path.join(root, config.license.file), 'utf8'), 'rehosted release must preserve the complete license notice');
 assert.ok(fs.existsSync(path.join(root, config.game.build_directory, config.game.entrypoint)));
+// This sample ships a PNG screenshot; the portal also accepts JPEG and WebP.
+// Verify the declared file rather than assuming a conventional root filename.
+assert.equal(typeof config.game.thumbnail, 'string', 'the example includes an optional thumbnail');
+const buildRoot = fs.realpathSync(path.join(root, config.game.build_directory));
+const thumbnailPath = fs.realpathSync(path.join(buildRoot, config.game.thumbnail));
+assert.ok(thumbnailPath.startsWith(buildRoot + path.sep), 'thumbnail must remain inside the committed static release');
+const thumbnail = fs.readFileSync(thumbnailPath);
+assert.ok(thumbnail.length > 0 && thumbnail.length <= 1024 * 1024, 'thumbnail must fit the 1 MiB limit');
+assert.equal(path.extname(thumbnailPath).toLowerCase(), '.png', 'update the sample image checks if changing its format');
+assert.ok(thumbnail.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])), 'thumbnail must contain actual PNG bytes');
+assert.equal(thumbnail.subarray(12, 16).toString('ascii'), 'IHDR');
+const thumbnailWidth = thumbnail.readUInt32BE(16), thumbnailHeight = thumbnail.readUInt32BE(20);
+assert.ok(thumbnailWidth > 0 && thumbnailWidth <= 4096 && thumbnailHeight > 0 && thumbnailHeight <= 4096, 'thumbnail dimensions must fit the portal limit');
+const thumbnailRepoPath = path.relative(root, thumbnailPath).split(path.sep).join('/');
+assert.ok(config.assets.attributions.some(item => item.path === thumbnailRepoPath && item.author === config.author.name && item.license === config.license.spdx_id), 'original screenshot must retain its author and license attribution');
 for (const filename of ['index.html', 'style.css', 'engine.js', 'app.js']) {
   const content = fs.readFileSync(path.join(root, 'game', filename), 'utf8');
   assert.doesNotMatch(content, /https?:\/\/|fetch\s*\(|XMLHttpRequest|WebSocket|localStorage|sessionStorage|type\s*=\s*["']module["']/, filename + ' must work offline in an opaque-origin sandbox');
 }
-console.log('Stamp Sprint checks passed: seeded parity, scoring, timer, release files, classic scripts, and offline isolation.');
+console.log('Stamp Sprint checks passed: seeded parity, scoring, timer, release files, thumbnail, classic scripts, and offline isolation.');
+console.log('Thumbnail:', thumbnailWidth + 'x' + thumbnailHeight, thumbnail.length, 'bytes;', config.game.thumbnail);
 console.log('Perfect seed 314159 shift:', a.score, 'points;', a.correct, 'parcels;', api.DURATION_TICKS, 'ticks.');

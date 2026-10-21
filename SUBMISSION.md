@@ -8,7 +8,7 @@ The portal reads the current default-branch commit, its manifest, its license, a
 
 Use this repository's [1v1mebro.json](1v1mebro.json) as the complete example. [1v1mebro.schema.json](1v1mebro.schema.json) is the JSON Schema reference for editors and validation tools. Configure the schema through your editor's settings; **do not add `$schema` to the manifest**, because v1 rejects extra keys.
 
-Every object requires exactly the documented keys. Strings must be nonempty unless stated below. Newlines, tabs, and carriage returns are allowed; other ASCII control characters are rejected. Paths are relative, use forward slashes, and contain only letters, digits, periods, underscores, and hyphens. No absolute paths, traversal, or dot path segments are allowed. A `build_directory` of `.` is the one exception.
+Only documented keys are allowed. Fields below are required except `game.thumbnail`, which is optional. Strings must be nonempty unless stated below. Newlines, tabs, and carriage returns are allowed; other ASCII control characters are rejected. Paths are relative, use forward slashes, and contain only letters, digits, periods, underscores, and hyphens. No absolute paths, traversal, or dot path segments are allowed. A `build_directory` of `.` is the one exception.
 
 | Field | Required value / limit |
 | --- | --- |
@@ -27,6 +27,7 @@ Every object requires exactly the documented keys. Strings must be nonempty unle
 | Each attribution | Exactly `path`, `author`, `license`, `source`; path ≤200, author/license ≤100, HTTPS source ≤500 or empty for original work |
 | `game.entrypoint` | Committed HTML file path relative to build directory, up to 200 characters |
 | `game.build_directory` | Committed static output directory relative to root, up to 200 characters, or `.` |
+| `game.thumbnail` | Optional image path relative to `game.build_directory`, up to 200 characters; PNG, JPG/JPEG, or WebP, at most 1 MiB and 4096 pixels per side |
 | `game.controls` | Touch and keyboard instructions, up to 1000 characters |
 | `game.player_count` | Integer `1` for current solo playtests |
 | `game.seeded` | Boolean `true`: reproducible rules and course |
@@ -37,6 +38,26 @@ Every object requires exactly the documented keys. Strings must be nonempty unle
 | `comments`, `notes` | Strings up to 3000 each; empty is allowed |
 
 A supported license identifier is an initial review filter. It does not establish that the license file actually grants those rights or that a third-party asset is compatible. Reviewers check both before hosting. Document dependencies, external services, known issues, accessibility limits, and build steps in `notes`.
+
+## Portal thumbnail
+
+Commit your thumbnail in the same static release as your game, then declare its path:
+
+```json
+{
+  "game": {
+    "entrypoint": "index.html",
+    "build_directory": "game",
+    "thumbnail": "thumbnail.png"
+  }
+}
+```
+
+This excerpt shows the relevant fields; retain the other required `game` fields from the complete manifest. Here the file is `game/thumbnail.png`, not `thumbnail.png` at the repository root. A nested path such as `images/card.webp` is also valid when that file is inside the build directory. External URLs and direct image uploads are not supported.
+
+Use a clear gameplay screenshot or original artwork you have the right to redistribute. A 1280×720 image (16:9) is recommended; there is no minimum size. The actual image must be PNG, JPG/JPEG, or WebP, no larger than 1 MiB or 4096 pixels on either side. Describe its provenance and license in `assets.license_notes` and any applicable attribution.
+
+This example's `game/thumbnail.png` is an unaltered screenshot of actual Stamp Sprint gameplay in Google Chrome with seed `314159`, covered by the game's MIT license. The portal picks up the declared image from the reviewed package when staff installs it, then serves it through the same build route. Omitting the field retains the letter fallback. Declaring an image does not bypass source, rights, or package review, and does not automatically approve or publish a submission.
 
 ## Minimum playable package
 
